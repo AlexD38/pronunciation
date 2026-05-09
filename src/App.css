@@ -14,6 +14,14 @@
 header {
   z-index: 10;
   margin-bottom: 20px; /* Moins d'espace sous le header */
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: top;
+}
+
+header.focus-mode {
+  opacity: 0.15;
+  transform: scale(0.85) translateY(-20px);
+  pointer-events: none;
 }
 
 .subtitle {
@@ -28,6 +36,32 @@ header {
   display: flex;
   justify-content: center;
   z-index: 10;
+}
+
+.history-container {
+  display: flex;
+  gap: 8px;
+  margin-top: -20px;
+  margin-bottom: 20px;
+  z-index: 10;
+  animation: fadeIn 0.5s ease-out;
+}
+
+.history-chip {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border);
+  padding: 4px 12px;
+  border-radius: 100px;
+  font-size: 0.8rem;
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.history-chip:hover {
+  background: var(--accent-glow);
+  border-color: var(--accent);
+  color: var(--text-h);
 }
 
 .background-decor {

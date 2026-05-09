@@ -215,5 +215,19 @@ export const utils = {
       console.error("Error fetching ARPAbet fallback:", error);
       return "?";
     }
+  },
+
+  async getSyllables(word) {
+    try {
+      const response = await fetch(`https://api.datamuse.com/words?sp=${word}&max=1&md=s`);
+      const data = await response.json();
+      if (data && data.length > 0) {
+        return data[0].numSyllables;
+      }
+      return null;
+    } catch (error) {
+      console.error("Error fetching syllables:", error);
+      return null;
+    }
   }
 };

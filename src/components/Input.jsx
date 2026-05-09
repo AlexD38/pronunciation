@@ -1,7 +1,7 @@
 import "./style.css";
 import { utils } from "../utils/utils";
 
-export const Input = ({ label, value, onChange, onKeyUp, result }) => {
+export const Input = ({ label, value, onChange, onKeyUp, onSpeak, result }) => {
   return (
     <div className="input-container">
       <label>{label}</label>
@@ -10,7 +10,10 @@ export const Input = ({ label, value, onChange, onKeyUp, result }) => {
         {value && (
           <button 
             className="audio-button" 
-            onClick={() => utils.speak(value)}
+            onClick={() => {
+              utils.speak(value);
+              onSpeak?.();
+            }}
             title="Listen to pronunciation"
           >
             🔊
@@ -22,8 +25,10 @@ export const Input = ({ label, value, onChange, onKeyUp, result }) => {
           <>
             {result.ipa && <span className="ipa">💡 {result.ipa}</span>}
             {result.sampa && <span className="sampa">👂 {result.sampa}</span>}
-            {result.soundsLike && result.soundsLike.length > 0 && (
-              <div className="sounds-like">
+            {result.syllables && (
+              <span className="syllables">📏 {result.syllables} {result.syllables > 1 ? "syllables" : "syllable"}</span>
+            )}
+            {result.soundsLike && result.soundsLike.length > 0 && (              <div className="sounds-like">
                 sounds like : {result.soundsLike.slice(0, 5).join(", ")}
               </div>
             )}
