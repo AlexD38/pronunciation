@@ -25,10 +25,8 @@ export const Input = ({ label, value, onChange, onKeyUp, onSpeak, result }) => {
           <>
             {result.ipa && <span className="ipa">💡 {result.ipa}</span>}
             {result.sampa && <span className="sampa">👂 {result.sampa}</span>}
-            {result.syllables && (
-              <span className="syllables">📏 {result.syllables} {result.syllables > 1 ? "syllables" : "syllable"}</span>
-            )}
-            {result.soundsLike && result.soundsLike.length > 0 && (              <div className="sounds-like">
+            {result.soundsLike && result.soundsLike.length > 0 && (
+              <div className="sounds-like">
                 sounds like : {result.soundsLike.slice(0, 5).join(", ")}
               </div>
             )}

@@ -217,16 +217,19 @@ export const utils = {
     }
   },
 
-  async getSyllables(word) {
+  async getDefinition(word) {
     try {
-      const response = await fetch(`https://api.datamuse.com/words?sp=${word}&max=1&md=s`);
+      const response = await fetch(`https://api.datamuse.com/words?sp=${word}&max=1&md=dp`);
       const data = await response.json();
       if (data && data.length > 0) {
-        return data[0].numSyllables;
+        return {
+          defs: data[0].defs ? data[0].defs[0] : null,
+          pos: data[0].tags ? data[0].tags.filter(t => ["n", "v", "adj", "adv"].includes(t)) : []
+        };
       }
       return null;
     } catch (error) {
-      console.error("Error fetching syllables:", error);
+      console.error("Error fetching definition:", error);
       return null;
     }
   }

@@ -7,6 +7,7 @@ function App() {
   const [inputValue, setInputValue] = useState("");
   const [result, setResult] = useState(null);
   const [history, setHistory] = useState([]);
+  const [toast, setToast] = useState(null);
 
   // Au chargement, on vérifie s'il y a un mot dans l'URL
   useEffect(() => {
@@ -30,12 +31,14 @@ function App() {
 
     if (!value.trim()) {
       setResult(null);
+      setToast(null);
       return;
     }
 
     const words = value.trim().split(/\s+/);
     
     // On prépare les phonèmes (localement ou fallback via API)
+    // NOTE: Le fallback API est conservé ici pour la fluidité de la transcription
     const phonemesPromises = words.map(async (word) => {
       let ph = utils.getPhonemes(word);
       if (ph === "?") {
@@ -66,15 +69,45 @@ function App() {
       sampa: `"${sampa}"`, 
       soundsLike: prev?.soundsLike || [] 
     }));
-
-    if (words.length === 1) {
-      const soundsLike = await utils.getSoundsLike(words[0]);
-      const syllables = await utils.getSyllables(words[0]);
-      setResult(prev => ({ ...prev, soundsLike, syllables }));
-    } else {
-      setResult(prev => ({ ...prev, soundsLike: [], syllables: null }));
-    }
   };
+
+  // Effet pour gérer le "debounce" des appels API lourds et de la notification
+  useEffect(() => {
+    if (!inputValue.trim()) return;
+
+    const timer = setTimeout(async () => {
+      const words = inputValue.trim().split(/\s+/);
+      
+      if (words.length === 1) {
+        const soundsLike = await utils.getSoundsLike(words[0]);
+        const definition = await utils.getDefinition(words[0]);
+        
+        setResult(prev => ({ ...prev, soundsLike }));
+        
+        if (definition && definition.defs) {
+          const rawDef = definition.defs.split("\t")[1] || definition.defs;
+          const shortDef = rawDef.split(".")[0] + ".";
+          
+          setToast({ 
+            text: shortDef, 
+            pos: definition.pos?.[0] 
+          });
+        }
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [inputValue]);
+
+  // Effet pour faire disparaître le toast automatiquement après 5s
+  useEffect(() => {
+    if (toast) {
+      const timer = setTimeout(() => {
+        setToast(null);
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [toast]);
 
   const addToHistory = (value) => {
     if (!value.trim()) return;
@@ -86,6 +119,12 @@ function App() {
 
   return (
     <main className="app-container">
+      {toast && (
+        <div className="toast">
+          {toast.pos && <span className="toast-pos">{toast.pos}</span>}
+          <p>{toast.text}</p>
+        </div>
+      )}
       <header className={inputValue ? "focus-mode" : ""}>
         <h1>Pronunciation</h1>
         <p className="subtitle">Translate any text into IPA and SAMPA phonetics instantly.</p>
