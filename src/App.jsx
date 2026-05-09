@@ -82,13 +82,22 @@ function App() {
         const soundsLike = await utils.getSoundsLike(words[0]);
         const definition = await utils.getDefinition(words[0]);
         
-        setResult(prev => ({ ...prev, soundsLike }));
+        // C'est une faute d'orthographe si l'API a trouvé un mot différent de l'input
+        const isMisspelled = definition && definition.word && definition.word.toLowerCase() !== words[0].toLowerCase();
         
-        if (definition && definition.defs) {
+        setResult(prev => ({ 
+          ...prev, 
+          soundsLike,
+          suggestion: isMisspelled ? definition.word : null
+        }));
+        
+        // On n'affiche le toast que si le mot est exactement celui tapé
+        if (definition && definition.defs && !isMisspelled) {
           const rawDef = definition.defs.split("\t")[1] || definition.defs;
           const shortDef = rawDef.split(".")[0] + ".";
           
           setToast({ 
+            word: definition.word.toUpperCase(),
             text: shortDef, 
             pos: definition.pos?.[0] 
           });
@@ -122,7 +131,7 @@ function App() {
       {toast && (
         <div className="toast">
           {toast.pos && <span className="toast-pos">{toast.pos}</span>}
-          <p>{toast.text}</p>
+          <p><strong>{toast.word}</strong>: {toast.text}</p>
         </div>
       )}
       <header className={inputValue ? "focus-mode" : ""}>

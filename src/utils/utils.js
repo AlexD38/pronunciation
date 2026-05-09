@@ -223,6 +223,7 @@ export const utils = {
       const data = await response.json();
       if (data && data.length > 0) {
         return {
+          word: data[0].word, // On renvoie le mot trouvé par l'API
           defs: data[0].defs ? data[0].defs[0] : null,
           pos: data[0].tags ? data[0].tags.filter(t => ["n", "v", "adj", "adv"].includes(t)) : []
         };

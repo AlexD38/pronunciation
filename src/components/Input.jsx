@@ -23,6 +23,11 @@ export const Input = ({ label, value, onChange, onKeyUp, onSpeak, result }) => {
       <div className="results-container">
         {result && (
           <>
+            {result.suggestion && (
+              <div className="suggestion">
+                Did you mean: <button onClick={() => onChange({ target: { value: result.suggestion } })}>{result.suggestion}</button>?
+              </div>
+            )}
             {result.ipa && <span className="ipa">💡 {result.ipa}</span>}
             {result.sampa && <span className="sampa">👂 {result.sampa}</span>}
             {result.soundsLike && result.soundsLike.length > 0 && (

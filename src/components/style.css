@@ -87,6 +87,30 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
+.suggestion {
+  font-size: 0.95rem;
+  color: var(--text);
+  margin-bottom: 10px;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.suggestion button {
+  background: none;
+  border: none;
+  color: var(--accent);
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0 4px;
+  font-family: inherit;
+  font-size: inherit;
+  transition: opacity 0.2s;
+}
+
+.suggestion button:hover {
+  opacity: 0.8;
+}
+
 .ipa, .sampa {
   font-family: var(--mono);
   font-size: 1.1rem;
