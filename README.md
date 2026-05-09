@@ -2,7 +2,7 @@
 
 A lightning-fast, glassmorphic React tool that instantly converts words and sentences into IPA and SAMPA phonetics. Powered by the CMU Dictionary and the DataMuse API for intelligent "sounds-like" suggestions.
 
-![Pronunciation Preview](https://raw.githubusercontent.com/vitejs/vite/main/docs/public/logo-with-shadow.png) *(Note: Add your own screenshot here)*
+![Pronunciation Preview](src/assets/screen.png)
 
 ## ✨ Features
 
