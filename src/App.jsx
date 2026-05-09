@@ -16,16 +16,27 @@ function App() {
 
     const words = value.trim().split(/\s+/);
     
-    const ipa = words
-      .map(word => {
-        const res = utils.convertToIPA(utils.getPhonemes(word));
+    // On prépare les phonèmes (localement ou fallback via API)
+    const phonemesPromises = words.map(async (word) => {
+      let ph = utils.getPhonemes(word);
+      if (ph === "?") {
+        ph = await utils.getArpabetFallback(word);
+      }
+      return ph;
+    });
+
+    const resolvedPhonemes = await Promise.all(phonemesPromises);
+
+    const ipa = resolvedPhonemes
+      .map(ph => {
+        const res = utils.convertToIPA(ph);
         return res ? res.slice(1, -1) : "?";
       })
       .join(" ");
 
-    const sampa = words
-      .map(word => {
-        const res = utils.convertToSampa(utils.getPhonemes(word));
+    const sampa = resolvedPhonemes
+      .map(ph => {
+        const res = utils.convertToSampa(ph);
         return res ? res.slice(1, -1) : "?";
       })
       .join(" ");
@@ -34,7 +45,7 @@ function App() {
       ...prev, 
       ipa: `/${ipa}/`, 
       sampa: `"${sampa}"`, 
-      soundsLike: [] 
+      soundsLike: prev?.soundsLike || [] 
     }));
 
     if (words.length === 1) {

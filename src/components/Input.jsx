@@ -1,10 +1,22 @@
 import "./style.css";
+import { utils } from "../utils/utils";
 
 export const Input = ({ label, value, onChange, onKeyUp, result }) => {
   return (
     <div className="input-container">
       <label>{label}</label>
-      <input type="text" value={value} onChange={onChange} onKeyUp={onKeyUp} />
+      <div className="input-wrapper">
+        <input type="text" value={value} onChange={onChange} onKeyUp={onKeyUp} />
+        {value && (
+          <button 
+            className="audio-button" 
+            onClick={() => utils.speak(value)}
+            title="Listen to pronunciation"
+          >
+            🔊
+          </button>
+        )}
+      </div>
       <div className="results-container">
         {result && (
           <>

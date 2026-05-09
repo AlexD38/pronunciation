@@ -164,5 +164,56 @@ export const utils = {
       console.error("Error fetching similar sounding words:", error);
       return [];
     }
+  },
+
+  speak(text) {
+    if (!window.speechSynthesis) return;
+    
+    window.speechSynthesis.cancel();
+    
+    const utterance = new SpeechSynthesisUtterance(text);
+    
+    // On récupère les voix disponibles
+    const voices = window.speechSynthesis.getVoices();
+    
+    // On cherche une voix "premium" ou plus naturelle
+    // Priorité : Google (Chrome), Siri/Samantha (Safari/Mac), ou une voix US standard
+    const preferredVoice = voices.find(v => v.name.includes("Google US English")) 
+      || voices.find(v => v.name.includes("Siri"))
+      || voices.find(v => v.name.includes("Samantha"))
+      || voices.find(v => v.lang.startsWith("en-US"))
+      || voices[0];
+
+    if (preferredVoice) {
+      utterance.voice = preferredVoice;
+    }
+
+    utterance.lang = "en-US";
+    utterance.rate = 1.0; // Vitesse normale pour un rendu plus naturel
+    utterance.pitch = 1.0;
+    
+    window.speechSynthesis.speak(utterance);
+  },
+
+  async getArpabetFallback(word) {
+    try {
+      // md=r demande la prononciation ARPAbet (tags 'r')
+      const response = await fetch(
+        `https://api.datamuse.com/words?sp=${word}&max=1&md=r`
+      );
+      const data = await response.json();
+      
+      if (data && data.length > 0 && data[0].tags) {
+        // Le tag de prononciation commence par 'pron:'
+        const pronTag = data[0].tags.find(tag => tag.startsWith("pron:"));
+        if (pronTag) {
+          return pronTag.replace("pron:", "");
+        }
+      }
+      return "?";
+    } catch (error) {
+      console.error("Error fetching ARPAbet fallback:", error);
+      return "?";
+    }
   }
 };
